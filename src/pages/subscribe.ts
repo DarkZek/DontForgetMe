@@ -17,15 +17,24 @@ if (!getApp()) {
 
 export const POST: APIRoute = async ({ request }) => {
   if (request.headers.get("Content-Type") !== "application/json") {
-    throw new Error('Invalid content type')
+    return new Response(JSON.stringify({
+      message: "Invalid content type"
+    }), {
+      status: 400
+    })
   }
 
   const body = await request.json()
 
-  console.log(request)
+  const registrationToken = body.token
 
-  // This registration token comes from the client FCM SDKs.
-  const registrationToken = body.token;
+  if (!registrationToken) {
+    return new Response(JSON.stringify({
+      message: "Invalid token"
+    }), {
+      status: 400
+    })
+  }
 
   const message: Message = {
     notification: {
@@ -35,16 +44,7 @@ export const POST: APIRoute = async ({ request }) => {
     token: registrationToken
   };
 
-  // Send a message to the device corresponding to the provided
-  // registration token.
   await getMessaging().send(message)
-    .then((response) => {
-      // Response is a message ID string.
-      console.log('Successfully sent message:', response);
-    })
-    .catch((error) => {
-      console.log('Error sending message:', error);
-    });
 
   return new Response(JSON.stringify({
     message: "Success"
