@@ -2,13 +2,13 @@
 // Temporarily send message straight away
 
 import { getMessaging, type Message } from 'firebase-admin/messaging'
-import { initializeApp, cert, getApp } from 'firebase-admin/app'
+import { initializeApp, cert, getApps } from 'firebase-admin/app'
 import type { APIRoute } from 'astro'
 
 export const prerender = false;
 
-if (!getApp()) {
-  const serviceAccountData: string = atob(process.env.FIREBASE_ADMIN_AUTH_BASE64!)
+if (!getApps().length) {
+  const serviceAccountData: string = atob(import.meta.env.FIREBASE_ADMIN_AUTH_BASE64!)
   const serviceAccount = JSON.parse(serviceAccountData)
   initializeApp({
     credential: cert(serviceAccount)
