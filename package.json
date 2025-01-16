@@ -9,11 +9,13 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@astrojs/node": "^9.0.1",
     "astro": "^5.1.7",
     "astro-icon": "^1.1.5",
     "dotenv": "^16.4.7",
     "drizzle-orm": "^0.38.3",
     "firebase": "^11.1.0",
+    "firebase-admin": "^13.0.2",
     "pg": "^8.13.1"
   },
   "devDependencies": {

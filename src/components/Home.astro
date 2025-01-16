@@ -1,1 +1,25 @@
-<a>Home Page</a>
+
+<button
+    onclick="doPermission()"
+>
+    Do the thing
+</button>
+
+<script>
+    async function doPermission() {
+        const token = await window.requestPermission()
+
+        await fetch('/subscribe', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                token
+            })
+        })
+
+        console.log('Success!', token)
+    }
+    window.doPermission = doPermission
+</script>
