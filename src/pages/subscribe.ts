@@ -44,7 +44,9 @@ export const POST: APIRoute = async ({ request }) => {
     token: registrationToken
   };
 
-  await getMessaging().send(message)
+  const messageId = await getMessaging().send(message)
+
+  console.log('Sent push notification with id ', messageId)
 
   return new Response(JSON.stringify({
     message: "Success"
