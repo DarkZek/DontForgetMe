@@ -28,16 +28,33 @@ export const POST: APIRoute = async ({ request }) => {
 
   const body = await request.json()
 
-  const { token: registrationToken, plantName } = body
+  const { plantName } = body
+  const cookies = request.headers.get('Cookie')
+
+  const fcmToken = cookies?.split(';')
+    .map(cookie => cookie.split('='))
+    .findLast(([key]) => {
+      return key.trim() === 'fcmToken'
+    })?.[1]
+
+  if (!fcmToken) {
+    return new Response(JSON.stringify({
+      message: "Invalid token"
+    }), {
+      status: 400
+    })
+  }
+
+  console.log(fcmToken)
 
   await db.insert(notificationsTable)
     .values({
-      fcmToken: registrationToken,
+      fcmToken,
       plantName: plantName,
       intervalMs: 1000 * 60
     })
 
-  if (!registrationToken) {
+  if (!fcmToken) {
     return new Response(JSON.stringify({
       message: "Invalid token"
     }), {
@@ -50,7 +67,7 @@ export const POST: APIRoute = async ({ request }) => {
       title: 'This is the title',
       body: 'Body Content'
     },
-    token: registrationToken
+    token: fcmToken
   };
 
   try {

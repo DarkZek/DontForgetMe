@@ -1,3 +1,18 @@
+---
+import { db } from '@db/index'
+import { notificationsTable } from '@db/schema'
+import { eq } from 'drizzle-orm'
+
+const fcmToken = Astro.cookies.get('fcmToken')?.value
+
+let subscription
+
+if (fcmToken) {
+    subscription = (await db.select().from(notificationsTable)
+        .where(eq(notificationsTable.fcmToken, fcmToken))
+        .limit(1))[0]
+}
+---
 
 <button
     id="trigger"
@@ -5,11 +20,23 @@
     Do the thing
 </button>
 
+{ subscription ? (
+    <p>
+        You are subscribed to notifications for {subscription.plantName}
+    </p>
+) : (
+    <p>
+        You are not subscribed to any notifications
+    </p>
+) }
+
 <script>
     import { requestPermission } from '../service/firebase'
 
     async function doPermission() {
-        const token = await requestPermission()
+        const fcmToken = await requestPermission()
+
+        document.cookie = `fcmToken=${fcmToken}`
 
         await fetch('/subscribe', {
             method: 'POST',
@@ -17,12 +44,11 @@
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                token,
                 plantName: 'Fern'
             })
         })
 
-        console.log('Successfully subscribed!', token)
+        console.log('Successfully subscribed!', fcmToken)
     }
     
     document.getElementById('trigger')?.addEventListener('click', doPermission)
