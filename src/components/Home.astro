@@ -15,26 +15,53 @@ if (fcmToken) {
 }
 ---
 
-<Icon name="noto:bell" size="24" />
+<div class="container">
+    
+    <div class="interval-editor">
+        <label for="interval">I want to be notified every</label>
+        <input type="number" id="interval" name="interval" min="1" max="30" value="7">
+        <span>days</span>
+    </div>
 
-<button
-    id="trigger"
->
-    Do the thing
-</button>
+    { subscription ? (
+        <p>
+            <Icon name="noto:bell" size="32" />
+            You're subscribed to notifications for {subscription.plantName}
+        </p>
+    ) : (
+        <p>
+            You are not subscribed to any notifications
+        </p>
+        <button
+            id="trigger"
+        >
+            Get notified when it's time to water your plants
+        </button>
+    ) }
+</div>
 
-{ subscription ? (
-    <p>
-        You are subscribed to notifications for {subscription.plantName}
-    </p>
-) : (
-    <p>
-        You are not subscribed to any notifications
-    </p>
-) }
+<style>
+
+    .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        font-family: 'Inter', sans-serif;
+    }
+
+    input {
+        background-color: rgb(150, 212, 150);
+        border: 1px solid green;
+        padding: 8px 4px 8px 12px;
+        border-radius: 4px;
+    }
+
+</style>
 
 <script>
-    import { requestPermission } from '../service/firebase'
+    import { requestPermission } from '../service/frontend/firebase'
 
     async function doPermission() {
         const fcmToken = await requestPermission()
