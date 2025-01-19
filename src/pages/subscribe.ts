@@ -1,21 +1,12 @@
-
-// Temporarily send message straight away
-
-import { getMessaging, type Message } from 'firebase-admin/messaging'
-import { initializeApp, cert, getApps } from 'firebase-admin/app'
+import { type Message, getMessaging } from 'firebase-admin/messaging'
 import type { APIRoute } from 'astro'
 import { db } from "@db/index"
 import { notificationsTable } from '@db/schema';
+import '@src/service/backend/firebase'
 
 export const prerender = false;
 
-if (!getApps().length) {
-  const serviceAccountData: string = atob(import.meta.env.FIREBASE_ADMIN_AUTH_BASE64!)
-  const serviceAccount = JSON.parse(serviceAccountData)
-  initializeApp({
-    credential: cert(serviceAccount)
-  })
-}
+const messaging = getMessaging()
 
 export const POST: APIRoute = async ({ request }) => {
   if (request.headers.get("Content-Type") !== "application/json") {
@@ -45,13 +36,11 @@ export const POST: APIRoute = async ({ request }) => {
     })
   }
 
-  console.log(fcmToken)
-
   await db.insert(notificationsTable)
     .values({
       fcmToken,
       plantName: plantName,
-      intervalMs: 1000 * 60
+      intervalSeconds: 60
     })
 
   if (!fcmToken) {
@@ -64,14 +53,14 @@ export const POST: APIRoute = async ({ request }) => {
 
   const message: Message = {
     notification: {
-      title: 'This is the title',
-      body: 'Body Content'
+      title: 'Example Watering Notification',
+      body: 'This is what your watering notification will look like'
     },
     token: fcmToken
   };
 
   try {
-    await getMessaging().send(message)
+    await messaging.send(message)
   } catch (e: any) {
     if (e.code === 'messaging/registration-token-not-registered') {
       console.error('User disabled push notifications', JSON.stringify(e))
