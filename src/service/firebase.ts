@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getMessaging, getToken, onMessage } from "firebase/messaging";
+import { getMessaging, getToken } from "firebase/messaging";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBEeODfJCF2oXhGgXEo2pUb5ozYaDbWRJs",
@@ -15,18 +15,13 @@ const app = initializeApp(firebaseConfig);
 
 const messaging = getMessaging(app);
 
-onMessage(messaging, payload => {
-    console.log('Message received. ', payload);
-    alert('Received message')
-});
-
 // Returns 
 async function requestPermission(askPermission: boolean = true) {
   console.log('Requesting permission...');
   
   const currentToken = await getToken(messaging, { vapidKey: 'BHFfVJ5LVRWtMS8__xhLO1L5kF1IBGti5MVrQApV2QI00OXTknLx4igvEYT_b7icf-rmCeU3iGYhGZfqP7pw0Qc' })
   
-  if (!currentToken) {
+  if (!currentToken && askPermission) {
     // Show permission request UI
     console.log('No registration token available. Requesting permission to generate one.');
 
@@ -43,4 +38,4 @@ async function requestPermission(askPermission: boolean = true) {
   return currentToken
 }
 
-window.requestPermission = requestPermission
+export { app, messaging, requestPermission }

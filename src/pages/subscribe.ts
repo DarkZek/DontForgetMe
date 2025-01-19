@@ -44,9 +44,16 @@ export const POST: APIRoute = async ({ request }) => {
     token: registrationToken
   };
 
-  const messageId = await getMessaging().send(message)
+  try {
+    await getMessaging().send(message)
+  } catch (e: any) {
+    if (e.code === 'messaging/registration-token-not-registered') {
+      console.error('User disabled push notifications', JSON.stringify(e))
+      throw new Error('User disabled push notifications')
+    }
 
-  console.log('Sent push notification with id ', messageId)
+    throw e
+  }
 
   return new Response(JSON.stringify({
     message: "Success"
