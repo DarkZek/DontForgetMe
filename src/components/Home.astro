@@ -2,6 +2,7 @@
 import { db } from '@db/index'
 import { notificationsTable } from '@db/schema'
 import { eq } from 'drizzle-orm'
+import { Icon } from 'astro-icon/components'
 
 const fcmToken = Astro.cookies.get('fcmToken')?.value
 
@@ -13,6 +14,8 @@ if (fcmToken) {
         .limit(1))[0]
 }
 ---
+
+<Icon name="noto:bell" size="24" />
 
 <button
     id="trigger"
