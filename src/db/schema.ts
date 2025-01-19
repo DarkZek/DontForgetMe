@@ -1,7 +1,10 @@
-import { boolean, pgTable, timestamp, uuid } from "drizzle-orm/pg-core";
+import { integer, pgTable, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
 
-export const usersTable = pgTable("notifications", {
+export const notificationsTable = pgTable("notifications", {
   id: uuid().primaryKey().defaultRandom(),
   createdAt: timestamp().defaultNow(),
-  repeating: boolean()
+  fcmToken: varchar({ length: 255 }).notNull(),
+  lastSentAt: timestamp(),
+  plantName: varchar({ length: 255 }).notNull(),
+  intervalMs: integer().notNull(),
 });

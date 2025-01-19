@@ -1,13 +1,15 @@
 
 <button
-    onclick="doPermission()"
+    id="trigger"
 >
     Do the thing
 </button>
 
 <script>
+    import { requestPermission } from '../service/firebase'
+
     async function doPermission() {
-        const token = await window.requestPermission()
+        const token = await requestPermission()
 
         await fetch('/subscribe', {
             method: 'POST',
@@ -15,11 +17,13 @@
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                token
+                token,
+                plantName: 'Fern'
             })
         })
 
-        console.log('Success!', token)
+        console.log('Successfully subscribed!', token)
     }
-    window.doPermission = doPermission
+    
+    document.getElementById('trigger')?.addEventListener('click', doPermission)
 </script>

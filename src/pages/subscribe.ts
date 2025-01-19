@@ -4,6 +4,8 @@
 import { getMessaging, type Message } from 'firebase-admin/messaging'
 import { initializeApp, cert, getApps } from 'firebase-admin/app'
 import type { APIRoute } from 'astro'
+import { db } from "@db/index"
+import { notificationsTable } from '@db/schema';
 
 export const prerender = false;
 
@@ -26,7 +28,14 @@ export const POST: APIRoute = async ({ request }) => {
 
   const body = await request.json()
 
-  const registrationToken = body.token
+  const { token: registrationToken, plantName } = body
+
+  await db.insert(notificationsTable)
+    .values({
+      fcmToken: registrationToken,
+      plantName: plantName,
+      intervalMs: 1000 * 60
+    })
 
   if (!registrationToken) {
     return new Response(JSON.stringify({
