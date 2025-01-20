@@ -19,7 +19,6 @@ export const POST: APIRoute = async ({ request }) => {
 
   const body = await request.json()
 
-  const { plantName } = body
   const cookies = request.headers.get('Cookie')
 
   const fcmToken = cookies?.split(';')
@@ -39,7 +38,6 @@ export const POST: APIRoute = async ({ request }) => {
   await db.insert(notificationsTable)
     .values({
       fcmToken,
-      plantName: plantName,
       intervalSeconds: 60
     })
 

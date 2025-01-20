@@ -5,6 +5,5 @@ export const notificationsTable = pgTable("notifications", {
   createdAt: timestamp().defaultNow(),
   fcmToken: varchar({ length: 255 }).notNull().unique(),
   lastSentAt: timestamp(),
-  plantName: varchar({ length: 255 }).notNull(),
   intervalSeconds: integer().notNull(),
 });
