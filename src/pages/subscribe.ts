@@ -17,7 +17,15 @@ export const POST: APIRoute = async ({ request }) => {
     })
   }
 
-  const body = await request.json()
+  const { intervalSeconds } = await request.json()
+
+  if (typeof intervalSeconds !== 'number') {
+    return new Response(JSON.stringify({
+      message: "Invalid intervalSeconds"
+    }), {
+      status: 400
+    })
+  }
 
   const cookies = request.headers.get('Cookie')
 
@@ -38,7 +46,7 @@ export const POST: APIRoute = async ({ request }) => {
   await db.insert(notificationsTable)
     .values({
       fcmToken,
-      intervalSeconds: 60
+      intervalSeconds
     })
 
   if (!fcmToken) {

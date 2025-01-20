@@ -28,17 +28,28 @@ async function doPermission() {
 
         document.cookie = `fcmToken=${fcmToken}`
 
+        let interval = (document.querySelector('input[name="interval"]:checked') as HTMLInputElement).value
+
+        if (interval === 'custom') {
+            interval = (document.getElementById('custom-interval') as HTMLInputElement).value
+        }
+
+        const intervalDays = parseInt(interval)
+
         await fetch('/subscribe', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
-            }
+            },
+            body: JSON.stringify({
+                intervalSeconds: 60 * 60 * 24 * intervalDays,
+            })
         })
 
         console.log('Successfully subscribed!')
 
         window.location.href = '/success'
-    } catch (e) {
+    } catch (e: any) {
         if (e.code === 'messaging/permission-blocked') {
             errorMessage!.textContent = 'You have blocked notifications. Please allow them in your browser settings.'
         } else {
