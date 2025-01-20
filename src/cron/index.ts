@@ -4,7 +4,7 @@ import "../service/backend/firebase"
 
 const jobs = [
   {
-    interval: 1000 * 6,
+    interval: 1000 * 60,
     job: notify
   }
 ]

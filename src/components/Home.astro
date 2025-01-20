@@ -4,6 +4,10 @@ import { notificationsTable } from '@db/schema'
 import { eq } from 'drizzle-orm'
 import { Icon } from 'astro-icon/components'
 
+import HowItWorks1 from '../assets/HowItWorks1.svg'
+import HowItWorks2 from '../assets/HowItWorks2.svg'
+import HowItWorks3 from '../assets/HowItWorks3.svg'
+
 const fcmToken = Astro.cookies.get('fcmToken')?.value
 
 let subscription
@@ -17,27 +21,70 @@ if (fcmToken) {
 
 <div class="container">
     
-    <div class="interval-editor">
-        <label for="interval">I want to be notified every</label>
-        <input type="number" id="interval" name="interval" min="1" max="30" value="7">
-        <span>days</span>
-    </div>
+    <div class="main-content">
+        <br>
+        <br>
 
-    { subscription ? (
-        <p>
-            <Icon name="noto:bell" size="32" />
-            You're subscribed to notifications for {subscription.plantName}
-        </p>
-    ) : (
-        <p>
-            You are not subscribed to any notifications
-        </p>
-        <button
-            id="trigger"
-        >
-            Get notified when it's time to water your plants
-        </button>
-    ) }
+        <div class="title">
+            <h1>Don't forget me!</h1>
+            <span>Your 🪴 watering companion</span>
+        </div>
+
+        <br>
+
+        <h3>How it works</h3>
+        
+        <div class="howitworks">
+            <img src={HowItWorks1.src} alt="1. Enter a watering interval">
+            <img src={HowItWorks2.src} alt="2. Get notified when it's watering time">
+            <img src={HowItWorks3.src} alt="3. Get follow ups">
+        </div>
+
+        <br>
+        <br>
+
+        <div class="interval-selection">
+            <input type="radio" id="i3" name="interval" value="3" checked>
+            <label for="i3" class="option">
+                <span>3</span>
+                <span>DAYS</span>
+            </label>
+
+            <input type="radio" id="i4" name="interval" value="4">
+            <label for="i4" class="option">
+                <span>4</span>
+                <span>DAYS</span>
+            </label>
+
+            <input type="radio" id="i5" name="interval" value="5">
+            <label for="i5" class="option">
+                <span>5</span>
+                <span>DAYS</span>
+            </label>
+
+            <input type="radio" id="icustom" name="interval" value="custom">
+            <label for="icustom" class="option">
+                <span>CUSTOM</span>
+                <span>DAYS</span>
+            </label>
+        </div>
+
+        <br>
+
+        { subscription ? (
+            <p>
+                <Icon name="noto:bell" size="32" />
+                You're subscribed to notifications for {subscription.plantName}
+            </p>
+        ) : (
+            <button
+                id="trigger"
+            >
+                Start watering reminders
+            </button>
+        ) }
+    </div>
+    <span class="quote">“Life is too short to not buy that houseplant’</span>
 </div>
 
 <style>
@@ -46,16 +93,85 @@ if (fcmToken) {
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: center;
-        height: 100vh;
-        font-family: 'Inter', sans-serif;
+        padding: 16px;
+        width: 800px;
+        margin: auto;
+        background-color: #D3FFBF;
+        min-height: 100vh;
+
+        .main-content {
+            min-height: calc(100vh - 20px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
     }
 
-    input {
-        background-color: rgb(150, 212, 150);
-        border: 1px solid green;
-        padding: 8px 4px 8px 12px;
-        border-radius: 4px;
+    button {
+        background-color: #17C23C;
+        box-shadow: 1px 2px 0px 0px rgba(0, 0, 0, 0.25);
+        padding: 12px 24px;
+        border-radius: 8px;
+        border: none;
+        color: white;
+        font-family: 'Jua', sans-serif;
+        font-size: 18px;
+    }
+
+    h3 {
+        text-align: center;
+        color: #114C0B;
+        font-size: 24px;
+    }
+
+    .howitworks {
+        display: flex;
+        flex-direction: row;
+        gap: 16px;
+    }
+
+    .title {
+        color: #114C0B;
+        text-align: center;
+
+        span {
+            color: #569450;
+            font-size: 24px;
+        }
+    }
+
+    .interval-selection {
+        display: flex;
+        flex-direction: row;
+        gap: 12px;
+
+        input {
+            display: none;
+        }
+
+        :checked + .option {
+            outline: 4px solid #2AC834;
+            color: #2AC834;
+        }
+
+        .option {
+            aspect-ratio: 1;
+            width: 80px;
+            outline: 2px solid green;
+            background: white;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+            transition: outline 0.15s ease-in-out;
+        }
+    }
+
+    .quote {
+        color: #114C0B;
     }
 
 </style>
