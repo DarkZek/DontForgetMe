@@ -12,6 +12,7 @@
   "dependencies": {
     "@astrojs/node": "^9.0.1",
     "@fontsource/jua": "^5.1.1",
+    "@sinclair/typebox": "^0.34.14",
     "astro": "^5.1.7",
     "astro-icon": "^1.1.5",
     "dotenv": "^16.4.7",

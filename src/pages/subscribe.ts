@@ -4,28 +4,30 @@ import { db } from "@db/index"
 import { notificationsTable } from '@db/schema';
 import '@src/service/backend/firebase'
 import { eq } from 'drizzle-orm'
+import { Type } from '@sinclair/typebox';
+import { Value } from '@sinclair/typebox/value';
+import { errorResponse } from '@src/service/response';
 
 export const prerender = false;
 
 const messaging = getMessaging()
 
+export const RequestType = Type.Object({
+  intervalSeconds: Type.Number({
+    minimum: 86400,
+    maximum: 2592000
+  })
+})
+
 export const POST: APIRoute = async ({ request }) => {
   if (request.headers.get("Content-Type") !== "application/json") {
-    return new Response(JSON.stringify({
-      message: "Invalid content type"
-    }), {
-      status: 400
-    })
+    return errorResponse("Invalid content type")
   }
 
-  const { intervalSeconds } = await request.json()
+  const body = await request.json()
 
-  if (typeof intervalSeconds !== 'number') {
-    return new Response(JSON.stringify({
-      message: "Invalid intervalSeconds"
-    }), {
-      status: 400
-    })
+  if (!Value.Check(RequestType, body)) {
+    return errorResponse("Invalid request body")
   }
 
   const cookies = request.headers.get('Cookie')
@@ -49,25 +51,17 @@ export const POST: APIRoute = async ({ request }) => {
     .where(eq(notificationsTable.fcmToken, fcmToken))
 
   if (existingRecord.length > 0) {
-    return new Response(JSON.stringify({
-      message: "Already subscribed"
-    }), {
-      status: 400
-    })
+    return errorResponse("Already subscribed")
   }
 
   await db.insert(notificationsTable)
     .values({
       fcmToken,
-      intervalSeconds
+      intervalSeconds: body.intervalSeconds
     })
 
   if (!fcmToken) {
-    return new Response(JSON.stringify({
-      message: "Invalid token"
-    }), {
-      status: 400
-    })
+    return errorResponse("Invalid token")
   }
 
   const message: Message = {
@@ -83,7 +77,7 @@ export const POST: APIRoute = async ({ request }) => {
   } catch (e: any) {
     if (e.code === 'messaging/registration-token-not-registered') {
       console.error('User disabled push notifications', JSON.stringify(e))
-      throw new Error('User disabled push notifications')
+      return errorResponse("User disabled push notifications")
     }
 
     throw e
