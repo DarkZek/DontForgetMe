@@ -3,6 +3,7 @@ import type { APIRoute } from 'astro'
 import { db } from "@db/index"
 import { notificationsTable } from '@db/schema';
 import '@src/service/backend/firebase'
+import { eq } from 'drizzle-orm'
 
 export const prerender = false;
 
@@ -38,6 +39,18 @@ export const POST: APIRoute = async ({ request }) => {
   if (!fcmToken) {
     return new Response(JSON.stringify({
       message: "Invalid token"
+    }), {
+      status: 400
+    })
+  }
+
+  const existingRecord = await db.select()
+    .from(notificationsTable)
+    .where(eq(notificationsTable.fcmToken, fcmToken))
+
+  if (existingRecord.length > 0) {
+    return new Response(JSON.stringify({
+      message: "Already subscribed"
     }), {
       status: 400
     })

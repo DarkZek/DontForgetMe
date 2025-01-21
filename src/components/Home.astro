@@ -73,9 +73,16 @@ if (fcmToken) {
 
         { subscription ? (
             <p>
-                <Icon name="noto:bell" size="32" />
+                <Icon name="noto:bell" size="24" />
                 You're already subscribed to notifications
             </p>
+            <a
+                class="button plausible-event-name=Change+Interval+Click"
+                href="/subscription"
+            >
+                <Icon name="noto:pencil" size="18" />
+                Change watering interval
+            </a>
         ) : (
             <button
                 id="notification-trigger"
@@ -96,17 +103,20 @@ if (fcmToken) {
         display: flex;
         flex-direction: column;
         align-items: center;
-        padding: 16px;
         width: 800px;
         margin: auto;
         background-color: #D3FFBF;
         min-height: 100vh;
+        max-width: 100vw;
+        padding-bottom: 24px;
 
         .main-content {
+            padding: 16px 16px 48px 16px;
             min-height: calc(100vh - 20px);
             display: flex;
             flex-direction: column;
             align-items: center;
+            max-width: calc(100% - 32px);
         }
     }
 
@@ -120,6 +130,8 @@ if (fcmToken) {
         display: flex;
         flex-direction: row;
         gap: 16px;
+        overflow: auto;
+        max-width: 100%;
     }
 
     .interval-selection {

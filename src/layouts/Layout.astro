@@ -6,9 +6,8 @@ import "@fontsource/jua";
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="generator" content={Astro.generator} />
 		<title>Don't Forget Me</title>
 		<script defer data-domain="dfm.marshalldoes.dev" src="https://a.marshalldoes.dev/js/script.file-downloads.hash.outbound-links.pageview-props.tagged-events.js"></script>
 		<script>window.plausible = window.plausible || function() { (window.plausible.q = window.plausible.q || []).push(arguments) }</script>
@@ -28,9 +27,10 @@ import "@fontsource/jua";
 		background-image: url('../assets/background.png');
 		background-size: 180px;
 		font-family: 'Jua', sans-serif;
+		overflow-x: hidden;
 	}
 
-	button {
+	button, a.button {
 		background-color: #17C23C;
 		box-shadow: 1px 2px 0px 0px rgba(0, 0, 0, 0.25);
 		padding: 12px 24px;
@@ -40,5 +40,6 @@ import "@fontsource/jua";
 		font-family: 'Jua', sans-serif;
 		font-size: 18px;
 		cursor: pointer;
+		text-decoration: none;
 	}
 </style>

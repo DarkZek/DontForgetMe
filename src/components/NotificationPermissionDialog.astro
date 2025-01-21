@@ -1,6 +1,11 @@
+---
+import { Icon } from 'astro-icon/components'
+---
+
 <div
     id="notification-permission-dialog"
     class="notification-permission-dialog"
+    onclick="if (event.target === this) this.style.display = 'none';"
 >
     <div class="dialog">
         <p>
@@ -11,6 +16,7 @@
             id="allow-notifications"
             class="plausible-event-name=Allow+Notifications+Click"
         >
+            <Icon name="noto:bell" size="18" />
             Allow Notifications
         </button>
         <br>
