@@ -10,6 +10,7 @@ import HowItWorks2 from '../assets/HowItWorks2.svg'
 import HowItWorks3 from '../assets/HowItWorks3.svg'
 
 import NotificationPermissionDialog from './NotificationPermissionDialog.astro'
+import IntervalSelection from './IntervalSelection.astro'
 
 const fcmToken = Astro.cookies.get('fcmToken')?.value
 
@@ -24,7 +25,7 @@ if (fcmToken) {
 
 <div class="container">
     
-    <div class="main-content">
+    <form class="main-content">
         <br>
         <br>
 
@@ -43,31 +44,7 @@ if (fcmToken) {
         <br>
         <br>
 
-        <div class="interval-selection">
-            <input type="radio" id="i3" name="interval" value="3" checked>
-            <label for="i3" class="option">
-                <span>3</span>
-                <span>DAYS</span>
-            </label>
-
-            <input type="radio" id="i4" name="interval" value="4">
-            <label for="i4" class="option">
-                <span>4</span>
-                <span>DAYS</span>
-            </label>
-
-            <input type="radio" id="i5" name="interval" value="5">
-            <label for="i5" class="option">
-                <span>5</span>
-                <span>DAYS</span>
-            </label>
-
-            <input type="radio" id="icustom" name="interval" value="custom">
-            <label for="icustom" class="option">
-                <span>CUSTOM</span>
-                <span>DAYS</span>
-            </label>
-        </div>
+        <IntervalSelection />
 
         <br>
 
@@ -84,15 +61,15 @@ if (fcmToken) {
                 Change watering interval
             </a>
         ) : (
-            <button
-                id="notification-trigger"
-                class="plausible-event-name=Start+Reminders+Click"
-            >
-                Start watering reminders
-            </button>
+            <input
+                type="submit"
+                class="button plausible-event-name=Start+Reminders+Click"
+                value="Start watering reminders"
+            />
         ) }
-    </div>
-    <span class="quote">“Life is too short to not buy that houseplant’</span>
+    </form>
+
+    <span class="quote">“Life is too short to not buy that houseplant"</span>
 </div>
 
 <NotificationPermissionDialog />
@@ -134,36 +111,6 @@ if (fcmToken) {
         max-width: 100%;
     }
 
-    .interval-selection {
-        display: flex;
-        flex-direction: row;
-        gap: 12px;
-
-        input {
-            display: none;
-        }
-
-        :checked + .option {
-            outline: 4px solid #2AC834;
-            color: #2AC834;
-        }
-
-        .option {
-            aspect-ratio: 1;
-            width: 80px;
-            outline: 2px solid green;
-            background: white;
-            border-radius: 8px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            user-select: none;
-            transition: outline 0.15s ease-in-out;
-        }
-    }
-
     .quote {
         color: #114C0B;
     }
@@ -171,9 +118,13 @@ if (fcmToken) {
 </style>
 
 <script>
-document.getElementById('notification-trigger')?.addEventListener('click', () => {
+document.querySelector('.main-content')!.addEventListener('submit', (e) => {
+    e.preventDefault()
+
     const dialog = document.getElementById('notification-permission-dialog')
     dialog!.style.opacity = '1'
     dialog!.style.display = 'block'
+
+    return false
 })
 </script>

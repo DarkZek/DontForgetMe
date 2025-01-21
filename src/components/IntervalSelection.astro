@@ -1,0 +1,89 @@
+<div class="interval-selection">
+    <input type="radio" id="i3" name="interval" value="3" checked>
+    <label for="i3" class="option">
+        <span>3</span>
+        <span>DAYS</span>
+    </label>
+
+    <input type="radio" id="i4" name="interval" value="4">
+    <label for="i4" class="option">
+        <span>4</span>
+        <span>DAYS</span>
+    </label>
+
+    <input type="radio" id="i5" name="interval" value="5">
+    <label for="i5" class="option">
+        <span>5</span>
+        <span>DAYS</span>
+    </label>
+
+    <input type="radio" id="icustom" name="interval" value="custom">
+    <label for="icustom" class="option">
+        <span>CUSTOM</span>
+        <span>DAYS</span>
+    </label>
+
+    <script>
+        const customInterval: HTMLFormElement = document.getElementById('custom-interval')! as HTMLFormElement
+        const customIntervalButton: HTMLFormElement = document.getElementById('icustom')! as HTMLFormElement
+
+        const radioButtons = document.querySelectorAll('input[type="radio"]')
+
+        radioButtons.forEach((radioButton) => {
+            radioButton.addEventListener('input', () => {
+                if (customIntervalButton.checked) {
+                    customInterval.style.display = 'block'
+                    customInterval.focus()
+                    customInterval.setAttribute('required', 'true')
+                } else {
+                    customInterval.style.display = 'none'
+                    customInterval.setAttribute('required', 'false')
+                }
+            })
+        })
+    </script>
+</div>
+
+<input type="number" id="custom-interval" placeholder="Enter days" style="display: none;" max="30" min="1">
+
+<style>
+    .interval-selection {
+        display: flex;
+        flex-direction: row;
+        gap: 12px;
+
+        input {
+            display: none;
+        }
+
+        :checked + .option {
+            outline: 4px solid #2AC834;
+            color: #2AC834;
+        }
+
+        .option {
+            aspect-ratio: 1;
+            width: 80px;
+            outline: 2px solid green;
+            background: white;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+            transition: outline 0.15s ease-in-out;
+        }
+    }
+
+    #custom-interval {
+        margin-top: 16px;
+        width: 100%;
+        max-width: 200px;
+        padding: 8px;
+        border-radius: 8px;
+        border: 2px solid #2AC834;
+        font-size: 16px;
+    }
+</style>
