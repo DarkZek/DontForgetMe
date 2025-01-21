@@ -1,84 +1,22 @@
 ---
 import Title from './Title.astro'
 ---
+<Title />
 
-<div class="container">
-    
-    <div class="main-content">
-        <br>
-        <br>
+<br>
 
-        <Title />
+<h3>Successfully subscribed</h3>
 
-        <br>
+<br>
 
-        <h3>Successfully subscribed</h3>
-
-        <br>
-        
-        <p>You should have recieved a test notification</p>
-    </div>
-    <span class="quote">“Life is too short to not buy that houseplant’</span>
-</div>
+<p>You should have recieved a test notification</p>
 
 <style>
-
-    .container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 16px;
-        width: 800px;
-        margin: auto;
-        background-color: #D3FFBF;
-        min-height: 100vh;
-
-        .main-content {
-            min-height: calc(100vh - 20px);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-    }
 
     h3 {
         text-align: center;
         color: #114C0B;
         font-size: 24px;
-    }
-
-    .interval-selection {
-        display: flex;
-        flex-direction: row;
-        gap: 12px;
-
-        input {
-            display: none;
-        }
-
-        :checked + .option {
-            outline: 4px solid #2AC834;
-            color: #2AC834;
-        }
-
-        .option {
-            aspect-ratio: 1;
-            width: 80px;
-            outline: 2px solid green;
-            background: white;
-            border-radius: 8px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            user-select: none;
-            transition: outline 0.15s ease-in-out;
-        }
-    }
-
-    .quote {
-        color: #114C0B;
     }
 
 </style>

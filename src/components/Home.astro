@@ -22,79 +22,60 @@ if (fcmToken) {
         .limit(1))[0]
 }
 ---
+  
+<form>
+    <br>
+    <br>
 
-<div class="container">
+    <Title />
+
+    <br>
+
+    <h3>How it works</h3>
     
-    <form class="main-content">
-        <br>
-        <br>
+    <div class="howitworks">
+        <img src={HowItWorks1.src} alt="1. Enter a watering interval">
+        <img src={HowItWorks2.src} alt="2. Get notified when it's watering time">
+        <img src={HowItWorks3.src} alt="3. Get follow ups">
+    </div>
 
-        <Title />
+    <br>
+    <br>
 
-        <br>
+    <IntervalSelection />
 
-        <h3>How it works</h3>
-        
-        <div class="howitworks">
-            <img src={HowItWorks1.src} alt="1. Enter a watering interval">
-            <img src={HowItWorks2.src} alt="2. Get notified when it's watering time">
-            <img src={HowItWorks3.src} alt="3. Get follow ups">
-        </div>
+    <br>
 
-        <br>
-        <br>
-
-        <IntervalSelection />
-
-        <br>
-
-        { subscription ? (
-            <p>
-                <Icon name="noto:bell" size="24" />
-                You're already subscribed to notifications
-            </p>
-            <a
-                class="button plausible-event-name=Change+Interval+Click"
-                href="/subscription"
-            >
-                <Icon name="noto:pencil" size="18" />
-                Change watering interval
-            </a>
-        ) : (
-            <input
-                type="submit"
-                class="button plausible-event-name=Start+Reminders+Click"
-                value="Start watering reminders"
-            />
-        ) }
-    </form>
-
-    <span class="quote">“Life is too short to not buy that houseplant"</span>
-</div>
+    { subscription ? (
+        <p>
+            <Icon name="noto:bell" size="24" />
+            You're already subscribed to notifications
+        </p>
+        <a
+            class="button plausible-event-name=Change+Interval+Click"
+            href="/subscription"
+        >
+            <Icon name="noto:pencil" size="18" />
+            Change watering interval
+        </a>
+    ) : (
+        <input
+            type="submit"
+            class="button plausible-event-name=Start+Reminders+Click"
+            value="Start watering reminders"
+        />
+    ) }
+</form>
 
 <NotificationPermissionDialog />
 
 <style>
 
-    .container {
+    form {
+        max-width: 100%;
         display: flex;
         flex-direction: column;
         align-items: center;
-        width: 800px;
-        margin: auto;
-        background-color: #D3FFBF;
-        min-height: 100vh;
-        max-width: 100vw;
-        padding-bottom: 24px;
-
-        .main-content {
-            padding: 16px 16px 48px 16px;
-            min-height: calc(100vh - 20px);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            max-width: calc(100% - 32px);
-        }
     }
 
     h3 {
@@ -109,10 +90,6 @@ if (fcmToken) {
         gap: 16px;
         overflow: auto;
         max-width: 100%;
-    }
-
-    .quote {
-        color: #114C0B;
     }
 
 </style>
