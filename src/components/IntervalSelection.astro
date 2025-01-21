@@ -50,7 +50,7 @@
                     customInterval.setAttribute('required', 'true')
                 } else {
                     customInterval.style.display = 'none'
-                    customInterval.setAttribute('required', 'false')
+                    customInterval.removeAttribute('required')
                     updateInterval(parseInt(input.target.value))
                 }
             })

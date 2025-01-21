@@ -1,5 +1,6 @@
 ---
 import { Icon } from 'astro-icon/components'
+import Loading from './Loading.astro'
 ---
 
 <div
@@ -12,6 +13,7 @@ import { Icon } from 'astro-icon/components'
             To send you reminders we need to ask for permission to send notifications.
             Please click the button below and allow the permission.
         </p>
+        <Loading size="64px" id="notification-permission-loading" />
         <button
             id="allow-notifications"
             class="plausible-event-name=Allow+Notifications+Click"
@@ -29,10 +31,14 @@ import { Icon } from 'astro-icon/components'
 import { requestPermission } from '../service/frontend/firebase'
 
 const errorMessage = document.getElementById('notification-permission-dialog')?.querySelector('.error-message')
+const loading = document.getElementById('notification-permission-loading')
+const button = document.getElementById('allow-notifications')
 
 async function doPermission() {
 
     errorMessage!.textContent = ''
+    loading!.style.display = 'block'
+    button!.style.display = 'none'
 
     try {
         const fcmToken = await requestPermission()
@@ -66,10 +72,13 @@ async function doPermission() {
         } else {
             errorMessage!.textContent = 'An error occurred. Please try again later.'
         }
+    } finally {    
+        loading!.style.display = 'none'
+        button!.style.display = 'block'
     }
 }
 
-document.getElementById('allow-notifications')?.addEventListener('click', doPermission)
+button!.addEventListener('click', doPermission)
 
 </script>
 

@@ -1,0 +1,26 @@
+---
+import { Icon } from "astro-icon/components";
+
+const { size, id } = Astro.props
+---
+
+<div id={id} style="display: none">
+    <Icon class="e1" name="noto:sunflower" size={size ?? '32px'} />
+</div>
+
+<style>
+    @keyframes animate-spin {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    .e1 {
+        animation: animate-spin 1.5s linear infinite;
+        transform-origin: 50% 40.7%;
+        aspect-ratio: 1;
+    }
+</style>
