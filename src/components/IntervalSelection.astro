@@ -1,4 +1,10 @@
 <div class="interval-selection">
+    <input type="radio" id="i2" name="interval" value="2" checked>
+    <label for="i2" class="option">
+        <span>2</span>
+        <span>DAYS</span>
+    </label>
+
     <input type="radio" id="i3" name="interval" value="3" checked>
     <label for="i3" class="option">
         <span>3</span>
@@ -8,12 +14,6 @@
     <input type="radio" id="i4" name="interval" value="4">
     <label for="i4" class="option">
         <span>4</span>
-        <span>DAYS</span>
-    </label>
-
-    <input type="radio" id="i5" name="interval" value="5">
-    <label for="i5" class="option">
-        <span>5</span>
         <span>DAYS</span>
     </label>
 
@@ -29,8 +29,21 @@
 
         const radioButtons = document.querySelectorAll('input[type="radio"]')
 
+        function updateInterval(interval: number) {
+            const event = new CustomEvent('intervalSelected', {
+                detail: interval
+            })
+
+            document.dispatchEvent(event)
+        }
+
+        window.addEventListener('load', () => {
+            updateInterval(3)
+        })
+
         radioButtons.forEach((radioButton) => {
-            radioButton.addEventListener('input', () => {
+            radioButton.addEventListener('input', (input) => {
+
                 if (customIntervalButton.checked) {
                     customInterval.style.display = 'block'
                     customInterval.focus()
@@ -38,8 +51,13 @@
                 } else {
                     customInterval.style.display = 'none'
                     customInterval.setAttribute('required', 'false')
+                    updateInterval(parseInt(input.target.value))
                 }
             })
+        })
+
+        customInterval.addEventListener('input', (input) => {
+            updateInterval(parseInt(input.target.value))
         })
     </script>
 </div>

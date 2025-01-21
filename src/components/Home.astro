@@ -11,6 +11,7 @@ import HowItWorks3 from '../assets/HowItWorks3.svg'
 
 import NotificationPermissionDialog from './NotificationPermissionDialog.astro'
 import IntervalSelection from './IntervalSelection.astro'
+import CalendarDisplay from './CalendarDisplay.astro'
 
 const fcmToken = Astro.cookies.get('fcmToken')?.value
 
@@ -43,6 +44,8 @@ if (fcmToken) {
     <br>
 
     <IntervalSelection />
+
+    <CalendarDisplay />
 
     <br>
 

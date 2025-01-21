@@ -19,7 +19,8 @@
     "drizzle-orm": "^0.38.3",
     "firebase": "^11.1.0",
     "firebase-admin": "^13.0.2",
-    "pg": "^8.13.1"
+    "pg": "^8.13.1",
+    "sass": "^1.83.4"
   },
   "devDependencies": {
     "@iconify-json/noto": "^1.2.2",
