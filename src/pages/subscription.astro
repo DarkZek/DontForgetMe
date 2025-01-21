@@ -1,10 +1,117 @@
 ---
-import ManageSubscription from '@src/components/ManageSubscription.astro';
+import CalendarDisplay from '../components/CalendarDisplay.astro'
+import Title from '../components/Title.astro'
 import Layout from '../layouts/Layout.astro';
+import { db } from '@db/index';
+import { notificationsTable } from '@db/schema';
+import { eq } from 'drizzle-orm';
 
 export const prerender = false
+
+const fcmToken = Astro.cookies.get('fcmToken')?.value
+
+if (!fcmToken) {
+	return Astro.redirect('/')
+}
+
+const subscription = (await db.select().from(notificationsTable)
+	.where(eq(notificationsTable.fcmToken, fcmToken))
+	.limit(1))[0]
+
+if (!subscription) {
+	return Astro.redirect('/')
+}
+
+const intervalDays = Math.round(subscription.intervalSeconds / (60 * 60 * 24))
+
+let offsetDays = 0
+
+if (subscription.lastSentAt) {
+	offsetDays = Math.round((subscription.lastSentAt.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
+}
+
+// If the lastSentAt is within 24 hours we consider it as watering day
+const wateringDay = offsetDays === 0
+
 ---
 
 <Layout>
-	<ManageSubscription />
+	
+	<Title />
+
+	<br>
+
+	<h3>
+		{ !wateringDay ? (
+			`Next watering day in ${offsetDays} days`
+		) : `Watering day today! 🌧️`
+		}
+	</h3>
+
+	<br>
+
+	<CalendarDisplay defaultInterval={intervalDays} offset={offsetDays} />
+
+	<button
+		id="skip-button"
+		class="plausible-event-name=Unsubscribe+Click"
+	>
+		Skip
+	</button>
+
+	<br>
+
+	<button
+		id="unsubscribe-button"
+		class="plausible-event-name=Unsubscribe+Click"
+	>
+		Unsubscribe
+	</button>
+
+	<style>
+
+		h3 {
+			text-align: center;
+			color: #114C0B;
+			font-size: 24px;
+		}
+
+	</style>
+
+	<script>
+		document.getElementById('unsubscribe-button')?.addEventListener('click', async () => {
+			await fetch('/unsubscribe', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			})
+	
+			console.log('Successfully unsubscribed!')
+	
+			window.location.href = '/'
+		})
+
+		document.getElementById('skip-button')?.addEventListener('click', async () => {
+			await fetch('/skip', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			})
+
+			console.log('Successfully skipped!')
+
+			window.location.reload()
+		})
+
+		const loadedAt = new Date()
+
+		// If the tab is inactive for more than an hour, refresh when they come back to keep up to date
+		document.addEventListener('blur', () => {
+			if (new Date().getTime() - loadedAt.getTime() > 1000 * 60 * 60) {
+				window.location.reload()
+			}
+		})
+	</script>
 </Layout>

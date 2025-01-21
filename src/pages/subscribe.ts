@@ -66,13 +66,14 @@ export const POST: APIRoute = async ({ request }) => {
 
   const message: Message = {
     notification: {
-      title: 'Example Watering Notification',
-      body: 'This is what your watering notification will look like'
+      title: '🌻 It\'s watering time for your plants!',
+      body: 'This is an example of what your watering reminders will look like'
     },
     token: fcmToken
   };
 
   try {
+    console.log('Sending', message)
     await messaging.send(message)
   } catch (e: any) {
     if (e.code === 'messaging/registration-token-not-registered') {
