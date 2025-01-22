@@ -65,7 +65,7 @@ async function doPermission() {
 
         console.log('Successfully subscribed!')
 
-        window.location.href = '/success'
+        window.location.href = '/subscription'
     } catch (e: any) {
         if (e.code === 'messaging/permission-blocked') {
             errorMessage!.textContent = 'You have blocked notifications. Please allow them in your browser settings.'
