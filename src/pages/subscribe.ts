@@ -73,7 +73,6 @@ export const POST: APIRoute = async ({ request }) => {
   };
 
   try {
-    console.log('Sending', message)
     await messaging.send(message)
   } catch (e: any) {
     if (e.code === 'messaging/registration-token-not-registered') {

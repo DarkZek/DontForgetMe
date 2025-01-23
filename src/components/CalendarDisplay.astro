@@ -18,15 +18,14 @@ function getSuffix(date: number) {
     }
 }
 
-const { defaultInterval, offset1 } = Astro.props
-
-const offset = offset1 || 1
+const { defaultInterval, offset } = Astro.props
 
 ---
 
 <div
     class="calendar"
     interval={defaultInterval}
+    offset={(offset || 0) + 1}
 >
     <!-- Loop over the previous day and next 7 days to make icons -->
     {
@@ -60,7 +59,7 @@ document.addEventListener('intervalSelected', (event) => {
 
 </script>
 
-<style lang="scss" define:vars={{offset}}>
+<style lang="scss">
 
 .calendar {
     display: flex;
@@ -86,12 +85,14 @@ document.addEventListener('intervalSelected', (event) => {
 
 .calendar {
     @for $i from 1 through 30 {
-        &[interval="#{$i}"] .item:nth-child(#{$i}n + 1) {
-            .water {
-                display: block;
-            }
-            .sun {
-                display: none;
+        @for $offset from 0 through 30 {
+            &[interval="#{$i}"][offset="#{$offset}"] .item:nth-child(#{$i}n + #{$offset}) {
+                .water {
+                    display: block;
+                }
+                .sun {
+                    display: none;
+                }
             }
         }
     }

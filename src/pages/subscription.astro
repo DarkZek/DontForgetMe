@@ -27,7 +27,7 @@ const intervalDays = Math.round(subscription.intervalSeconds / (60 * 60 * 24))
 let offsetDays = 0
 
 if (subscription.lastSentAt) {
-	offsetDays = Math.round((subscription.lastSentAt.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
+	offsetDays = Math.floor((subscription.lastSentAt.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
 }
 
 // If the lastSentAt is within 24 hours we consider it as watering day
@@ -52,12 +52,16 @@ const wateringDay = offsetDays === 0
 
 	<CalendarDisplay defaultInterval={intervalDays} offset={offsetDays} />
 
-	<button
-		id="skip-button"
-		class="plausible-event-name=Unsubscribe+Click"
-	>
-		Skip
-	</button>
+	{
+		wateringDay && (
+			<button
+				id="skip-button"
+				class="plausible-event-name=Skip+Click"
+			>
+				Skip
+			</button>
+		)
+	}
 
 	<br>
 

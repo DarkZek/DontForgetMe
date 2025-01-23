@@ -34,7 +34,7 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   // If the last send date isn't within 24 hours
-  if (notification.lastSentAt < new Date(Date.now() - 24 * 60 * 60 * 1000)) {
+  if (notification.lastSentAt > new Date(Date.now() + 24 * 60 * 60 * 1000)) {
     return errorResponse("It's not a watering day")
   }
 
