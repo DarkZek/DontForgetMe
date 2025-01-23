@@ -3,7 +3,7 @@ import type { APIRoute } from 'astro'
 import { db } from "@db/index"
 import { notificationsTable } from '@db/schema';
 import '@src/service/backend/firebase'
-import { eq } from 'drizzle-orm'
+import { eq, sql } from 'drizzle-orm'
 import { Type } from '@sinclair/typebox';
 import { Value } from '@sinclair/typebox/value';
 import { errorResponse } from '@src/service/response';
@@ -57,7 +57,9 @@ export const POST: APIRoute = async ({ request }) => {
   await db.insert(notificationsTable)
     .values({
       fcmToken,
-      intervalSeconds: body.intervalSeconds
+      intervalSeconds: body.intervalSeconds,
+      nextWateringTime: sql.raw(`NOW() + INTERVAL '${body.intervalSeconds} seconds'`),
+      wateringAcknowledged: true
     })
 
   if (!fcmToken) {

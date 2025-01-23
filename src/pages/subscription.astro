@@ -22,16 +22,65 @@ if (!subscription) {
 	return Astro.redirect('/')
 }
 
-const intervalDays = Math.round(subscription.intervalSeconds / (60 * 60 * 24))
+const dayInSeconds = 60 * 60 * 24
+const dayInMillis = dayInSeconds * 1000
 
-let offsetDays = 0
+const intervalDays = Math.round(subscription.intervalSeconds / dayInSeconds)
 
-if (subscription.lastSentAt) {
-	offsetDays = Math.floor((subscription.lastSentAt.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
+let daysWateringOverdue = -1
+
+// If they haven't acknowledged the watering then they're overdue
+if (!subscription.wateringAcknowledged && subscription.nextWateringTime.getTime() < new Date().getTime()) {
+	// Calculate how many millis we're overdue by
+	const overdueMillis = new Date().getTime() - subscription.nextWateringTime.getTime()
+	daysWateringOverdue = Math.floor(overdueMillis / dayInMillis)
 }
 
-// If the lastSentAt is within 24 hours we consider it as watering day
-const wateringDay = offsetDays === 0
+let daysUntilNextWatering = -1
+
+if (subscription.nextWateringTime.getTime() > new Date().getTime()) {
+	// Calculate how many millis until the next watering
+	const millisUntilNextWatering = subscription.nextWateringTime.getTime() - new Date().getTime()
+	daysUntilNextWatering = Math.ceil(millisUntilNextWatering / dayInMillis)
+}
+
+let offsetDays = Math.floor((new Date().getTime() - subscription.nextWateringTime.getTime()) / dayInMillis)
+
+// If the nextWateringTime is within 24 hours we consider it as watering day
+const wateringDay = daysUntilNextWatering === 0
+
+// Returns X hour, X minutes
+function getReminderTime() {
+	console.log(subscription.nextWateringTime.toISOString(), new Date().toISOString())
+	const differenceInMillis = subscription.nextWateringTime.getTime() - new Date().getTime()
+
+	const hours = differenceInMillis / (1000 * 60 * 60)
+	const minutes = Math.ceil((differenceInMillis % (1000 * 60 * 60)) / (1000 * 60))
+
+	return `${Math.floor(hours)} hours, ${Math.ceil(minutes)} minute${minutes > 1 ? 's' : ''}`
+}
+
+enum DayType {
+	Watering,
+	Normal,
+	Overdue
+}
+
+let day = DayType.Normal
+
+if (daysWateringOverdue === 0) {
+	day = DayType.Watering
+} else if (daysWateringOverdue > 0) {
+	day = DayType.Overdue
+}
+
+let message = `Next watering in ${daysUntilNextWatering} day${daysUntilNextWatering > 1 ? 's' : ''}`
+
+if (day === DayType.Watering) {
+	message = `It's watering day! 🌧️`
+} else if (day === DayType.Overdue) {
+	message = `You're ${daysWateringOverdue} day${daysWateringOverdue > 1 ? 's' : ''} overdue 🍂`
+}
 
 ---
 
@@ -41,16 +90,11 @@ const wateringDay = offsetDays === 0
 
 	<br>
 
-	<h3>
-		{ !wateringDay ? (
-			`Next watering day in ${offsetDays} days`
-		) : `Watering day today! 🌧️`
-		}
-	</h3>
+	<h3>{message}</h3>
 
 	<br>
 
-	<CalendarDisplay defaultInterval={intervalDays} offset={offsetDays} />
+	<CalendarDisplay defaultInterval={intervalDays} offset={daysUntilNextWatering} />
 
 	{
 		wateringDay && (

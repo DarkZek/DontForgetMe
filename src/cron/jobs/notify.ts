@@ -9,12 +9,9 @@ const messaging = getMessaging()
 export async function notify() {
     // Fetch all notifications that need to be sent
     const notifications = await db.select().from(notificationsTable)
-        .where(or(
-            sql`NOW() - "lastSentAt" > make_interval(secs => "intervalSeconds")`,
-            and(
-                isNull(notificationsTable.lastSentAt),
-                sql`NOW() - "createdAt" > make_interval(secs => "intervalSeconds")`,
-            )
+        .where(and(
+            sql`"nextWateringTime" > NOW()`,
+            eq(notificationsTable.wateringAcknowledged, false),
         ))
 
     // Send notifications
@@ -42,7 +39,7 @@ export async function notify() {
 
         // Update lastSentAt
         await db.update(notificationsTable)
-            .set({ lastSentAt: sql`NOW()` })
+            .set({ wateringAcknowledged: false })
             .where(eq(notificationsTable.id, notification.id))
     }
 }

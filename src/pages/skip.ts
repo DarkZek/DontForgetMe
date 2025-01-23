@@ -33,14 +33,14 @@ export const POST: APIRoute = async ({ request }) => {
     return errorResponse("Not subscribed")
   }
 
-  // If the last send date isn't within 24 hours
-  if (notification.lastSentAt > new Date(Date.now() + 24 * 60 * 60 * 1000)) {
+  // If the last watering had been acknowledged and the next watering hasn't started yet
+  if (notification.wateringAcknowledged && notification.nextWateringTime < new Date()) {
     return errorResponse("It's not a watering day")
   }
 
   await db.update(notificationsTable)
     .set({
-      lastSentAt: sql`"lastSentAt" + interval '1 day'`
+      nextWateringTime: sql`"nextWateringTime" + interval '1 day'`
     })
     .where(eq(notificationsTable.fcmToken, fcmToken))
 
