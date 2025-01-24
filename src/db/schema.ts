@@ -9,6 +9,9 @@ export const notificationsTable = pgTable("notifications", {
   nextWateringTime: timestamp({
     withTimezone: true
   }).notNull(),
+  lastWateringTime: timestamp({
+    withTimezone: true
+  }),
   wateringAcknowledged: boolean().notNull(),
   intervalSeconds: integer().notNull(),
 });

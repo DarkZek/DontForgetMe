@@ -59,7 +59,8 @@ export const POST: APIRoute = async ({ request }) => {
       fcmToken,
       intervalSeconds: body.intervalSeconds,
       nextWateringTime: sql.raw(`NOW() + INTERVAL '${body.intervalSeconds} seconds'`),
-      wateringAcknowledged: true
+      wateringAcknowledged: true,
+      lastWateringTime: sql`NOW()`
     })
 
   if (!fcmToken) {

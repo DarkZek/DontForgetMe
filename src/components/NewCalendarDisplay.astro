@@ -1,0 +1,136 @@
+---
+import type { notificationsTable } from '@db/schema'
+import { dayInMillis } from '@src/const'
+import { Icon } from 'astro-icon/components'
+import type { InferSelectModel } from 'drizzle-orm'
+
+type Subscription = InferSelectModel<typeof notificationsTable>
+
+const { subscription } = Astro.props as { subscription: Subscription }
+
+function getSuffix(date: number) {
+    
+    date %= 10
+
+    if (date === 1) {
+        return 'st'
+    } else if (date === 2) {
+        return 'nd'
+    } else if (date === 3) {
+        return 'rd'
+    } else {
+        return 'th'
+    }
+}
+
+function isSameDay(d1: Date, d2: Date): boolean {
+	return d1.getFullYear() === d2.getFullYear() && d1.getMonth() === d2.getMonth() && d1.getDate() === d2.getDate()
+}
+
+function getCalendarEntries() {
+	// Create an array of dates to show your missed or upcoming watering day, as well as surrounding context
+	const wateringDay = subscription.nextWateringTime
+
+	// Get yesterday
+	const yesterday = new Date(new Date().getTime() - dayInMillis)
+
+	// Pick the furtherst date to show
+	const furthestDate = wateringDay.getTime() > yesterday.getTime() ? yesterday : wateringDay
+
+    const datesCount = 7
+
+	// Create a list of dates to show
+	return new Array(datesCount).fill(null).map((_, i) => {
+		const date = new Date(furthestDate.getTime() + (i * dayInMillis))
+
+		let dateString = `${date.getDate()}${getSuffix(date.getDate())}`
+        let isWatering = false
+
+		// If it's today
+		if (isSameDay(date, new Date())) {
+			dateString = 'Today'
+		}
+        
+        if (isSameDay(date, wateringDay)) {
+            isWatering = true
+        }
+        if (subscription.lastWateringTime && isSameDay(date, subscription.lastWateringTime)) {
+            isWatering = true
+        }
+        for (let i = 0; i < datesCount; i++) {
+            if (isSameDay(date, new Date(subscription.nextWateringTime.getTime() + (i * subscription.intervalSeconds * 1000))) && !isWatering) {
+                isWatering = true
+            }
+        }
+
+		return {
+			date: dateString,
+			isWatering
+		}
+	})
+}
+
+const items = getCalendarEntries()
+
+---
+
+<div
+    class="calendar"
+>
+    <!-- Loop over the previous day and next 7 days to make icons -->
+    {
+        items.map((item, i) => {
+            return (
+                <div class="item">
+                    {
+                        item.isWatering ? (
+                            <Icon name="noto:shower" size="28px" />
+                        ) : (
+                            <Icon name="noto:sun" size="28px" />
+                        )
+                    }
+                    {
+                        <span>{item.date}</span>
+                    }
+                </div>
+            )
+        })
+    }
+</div>
+
+<script>
+
+const calendar = document.querySelector('.calendar')
+
+document.addEventListener('intervalSelected', (event) => {
+    calendar!.setAttribute('interval', event.detail)
+})
+
+</script>
+
+<style lang="scss">
+
+.calendar {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    gap: 6px;
+    padding: 12px;
+    max-width: 100%;
+    overflow-x: auto;
+
+    .item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+        width: 36px;
+        background-color: rgba(255, 255, 255, 0.508);
+        border-radius: 12px;
+        padding: 12px;
+        color: #383838;
+
+    }
+}
+
+</style>

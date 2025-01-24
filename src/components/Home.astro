@@ -43,12 +43,6 @@ if (fcmToken) {
     <br>
     <br>
 
-    <IntervalSelection />
-
-    <CalendarDisplay />
-
-    <br>
-
     { subscription ? (
         <p>
             <Icon name="noto:bell" size="24" />
@@ -62,6 +56,11 @@ if (fcmToken) {
             Change watering interval
         </a>
     ) : (
+
+        <IntervalSelection />
+
+        <CalendarDisplay />
+
         <input
             type="submit"
             class="button plausible-event-name=Start+Reminders+Click"

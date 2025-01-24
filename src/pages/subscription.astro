@@ -1,5 +1,6 @@
 ---
-import CalendarDisplay from '../components/CalendarDisplay.astro'
+import { dayInMillis } from '@src/const';
+import CalendarDisplay from '../components/NewCalendarDisplay.astro'
 import Title from '../components/Title.astro'
 import Layout from '../layouts/Layout.astro';
 import { db } from '@db/index';
@@ -21,11 +22,6 @@ const subscription = (await db.select().from(notificationsTable)
 if (!subscription) {
 	return Astro.redirect('/')
 }
-
-const dayInSeconds = 60 * 60 * 24
-const dayInMillis = dayInSeconds * 1000
-
-const intervalDays = Math.round(subscription.intervalSeconds / dayInSeconds)
 
 let daysWateringOverdue = -1
 
@@ -94,7 +90,9 @@ if (day === DayType.Watering) {
 
 	<br>
 
-	<CalendarDisplay defaultInterval={intervalDays} offset={daysUntilNextWatering} />
+	<CalendarDisplay
+		subscription={subscription}
+	/>
 
 	{
 		wateringDay && (
