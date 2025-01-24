@@ -31,13 +31,17 @@ function getCalendarEntries() {
 	// Create an array of dates to show your missed or upcoming watering day, as well as surrounding context
 	const wateringDay = subscription.nextWateringTime
 
+    const dayBeforeWateringDay = new Date(wateringDay.getTime() - dayInMillis)
+
 	// Get yesterday
 	const yesterday = new Date(new Date().getTime() - dayInMillis)
 
 	// Pick the furtherst date to show
-	const furthestDate = wateringDay.getTime() > yesterday.getTime() ? yesterday : wateringDay
+	const furthestDate = dayBeforeWateringDay.getTime() > yesterday.getTime() ? yesterday : dayBeforeWateringDay
 
     const datesCount = 7
+
+    const isWateringLate = wateringDay < new Date()
 
 	// Create a list of dates to show
 	return new Array(datesCount).fill(null).map((_, i) => {
@@ -45,6 +49,7 @@ function getCalendarEntries() {
 
 		let dateString = `${date.getDate()}${getSuffix(date.getDate())}`
         let isWatering = false
+        let isBehind = false
 
 		// If it's today
 		if (isSameDay(date, new Date())) {
@@ -62,10 +67,19 @@ function getCalendarEntries() {
                 isWatering = true
             }
         }
+        // If they're late then they need to catch up for it to be watering day again
+        if (isWateringLate && date > wateringDay && date < new Date()) {
+            isWatering = false
+        }
+
+        if (isWateringLate && isSameDay(date, wateringDay)) {
+            isBehind = true
+        }
 
 		return {
 			date: dateString,
-			isWatering
+			isWatering,
+            isBehind
 		}
 	})
 }
@@ -81,9 +95,11 @@ const items = getCalendarEntries()
     {
         items.map((item, i) => {
             return (
-                <div class="item">
+                <div class={`item ${item.isBehind ? 'behind' : ''} ${item.isWatering ? 'watering' : ''}`}>
                     {
-                        item.isWatering ? (
+                        item.isBehind ? (
+                            <Icon name="noto:fallen-leaf" size="28px" />
+                        ) : item.isWatering ? (
                             <Icon name="noto:shower" size="28px" />
                         ) : (
                             <Icon name="noto:sun" size="28px" />
@@ -125,10 +141,18 @@ document.addEventListener('intervalSelected', (event) => {
         align-items: center;
         gap: 0.5rem;
         width: 36px;
-        background-color: rgba(255, 255, 255, 0.508);
+        background-color: rgba(255, 255, 239, 0.508);
         border-radius: 12px;
         padding: 12px;
         color: #383838;
+
+        &.watering {
+            background-color: rgba(221, 242, 255, 0.5);
+        }
+
+        &.behind {
+            background-color: rgba(255, 193, 167, 0.5);
+        }
 
     }
 }

@@ -40,21 +40,8 @@ if (subscription.nextWateringTime.getTime() > new Date().getTime()) {
 	daysUntilNextWatering = Math.ceil(millisUntilNextWatering / dayInMillis)
 }
 
-let offsetDays = Math.floor((new Date().getTime() - subscription.nextWateringTime.getTime()) / dayInMillis)
-
 // If the nextWateringTime is within 24 hours we consider it as watering day
 const wateringDay = daysUntilNextWatering === 0
-
-// Returns X hour, X minutes
-function getReminderTime() {
-	console.log(subscription.nextWateringTime.toISOString(), new Date().toISOString())
-	const differenceInMillis = subscription.nextWateringTime.getTime() - new Date().getTime()
-
-	const hours = differenceInMillis / (1000 * 60 * 60)
-	const minutes = Math.ceil((differenceInMillis % (1000 * 60 * 60)) / (1000 * 60))
-
-	return `${Math.floor(hours)} hours, ${Math.ceil(minutes)} minute${minutes > 1 ? 's' : ''}`
-}
 
 enum DayType {
 	Watering,
@@ -107,6 +94,19 @@ if (day === DayType.Watering) {
 
 	<br>
 
+	{
+		(day === DayType.Overdue || day === DayType.Watering) && (
+			<button
+				id="watered-button"
+				class="plausible-event-name=Watered+Click"
+			>
+				Mark as watered
+			</button>
+		)
+	}
+
+	<br>
+
 	<button
 		id="unsubscribe-button"
 		class="plausible-event-name=Unsubscribe+Click"
@@ -146,7 +146,16 @@ if (day === DayType.Watering) {
 				}
 			})
 
-			console.log('Successfully skipped!')
+			window.location.reload()
+		})
+
+		document.getElementById('watered-button')?.addEventListener('click', async () => {
+			await fetch('/acknowledge', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			})
 
 			window.location.reload()
 		})
