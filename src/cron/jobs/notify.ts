@@ -10,8 +10,8 @@ export async function notify() {
     // Fetch all notifications that need to be sent
     const notifications = await db.select().from(notificationsTable)
         .where(and(
-            sql`"nextWateringTime" > NOW()`,
-            eq(notificationsTable.wateringAcknowledged, false),
+            sql`"nextWateringTime" < NOW()`,
+            eq(notificationsTable.wateringAcknowledged, true),
         ))
 
     // Send notifications
@@ -41,5 +41,7 @@ export async function notify() {
         await db.update(notificationsTable)
             .set({ wateringAcknowledged: false })
             .where(eq(notificationsTable.id, notification.id))
+
+        console.log('Sent notification', notification.id)
     }
 }
