@@ -2,6 +2,7 @@ import fastify from 'fastify'
 import cookie from '@fastify/cookie'
 import { subscribeRouter } from './routes/subscribe'
 import { ClientError } from './error'
+import { skipRouter } from './routes/skip'
 
 const server = fastify({
   logger: true
@@ -38,6 +39,7 @@ server.register((server) => {
   })
 
   server.register(subscribeRouter, { prefix: '/subscribe' })
+  server.register(skipRouter, { prefix: '/skip' })
 })
 
 server.get('/status', async (_1, _2) => {
