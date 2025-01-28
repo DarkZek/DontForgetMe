@@ -5,6 +5,7 @@ import { ClientError } from './error'
 import { skipRouter } from './routes/skip'
 import { unsubscribeRouter } from './routes/unsubscribe'
 import { acknowledgeRouter } from './routes/acknowledge'
+import { startCron } from './cron'
 
 const server = fastify({
   logger: true
@@ -57,3 +58,5 @@ server.listen({ port: 8080 }, (err, address) => {
   }
   console.log(`Server listening at ${address}`)
 })
+
+startCron()

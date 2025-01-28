@@ -1,8 +1,7 @@
 import { type Message, getMessaging } from 'firebase-admin/messaging'
-import { db } from '../../db/index'
-import { notificationsTable } from '../../db/schema'
-import { and, eq, isNull, or, sql } from 'drizzle-orm'
-import '../../service/backend/firebase'
+import { db } from '@db/index'
+import { notificationsTable } from '@db/schema'
+import { and, eq, sql } from 'drizzle-orm'
 
 const messaging = getMessaging()
 
