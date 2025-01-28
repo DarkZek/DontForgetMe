@@ -17,7 +17,7 @@ async function skip(
   
     // If the last watering had been acknowledged and the next watering hasn't started yet
     if (notification.wateringAcknowledged && notification.nextWateringTime < new Date()) {
-        throw new ClientError('NOT_SUBSCRIBED', 'Its not watering day')
+        throw new ClientError('NOT_WATERING_DAY', 'Its not watering day')
     }
   
     await db.update(notificationsTable)
