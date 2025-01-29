@@ -1,10 +1,63 @@
 ---
-import Home from '../components/Home.astro';
+import Title from '../components/Title.astro'
+
+import HowItWorks1 from '../assets/HowItWorks1.svg'
+import HowItWorks2 from '../assets/HowItWorks2.svg'
+import HowItWorks3 from '../assets/HowItWorks3.svg'
+
+import CreateSubscription from '../components/CreateSubscription.vue'
 import Layout from '../layouts/Layout.astro';
 
 export const prerender = true
 ---
 
 <Layout>
-	<Home />
+  
+	<div>
+		<br>
+		<br>
+
+		<Title />
+
+		<br>
+
+		<h3>How it works</h3>
+		
+		<div class="howitworks">
+			<img src={HowItWorks1.src} alt="1. Enter a watering interval">
+			<img src={HowItWorks2.src} alt="2. Get notified when it's watering time">
+			<img src={HowItWorks3.src} alt="3. Get follow ups">
+		</div>
+
+		<br>
+		<br>
+
+		<CreateSubscription client:load />
+	</div>
+
+	<style>
+
+		form {
+			max-width: 100%;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+		}
+
+		h3 {
+			text-align: center;
+			color: #114C0B;
+			font-size: 24px;
+		}
+
+		.howitworks {
+			display: flex;
+			flex-direction: row;
+			gap: 16px;
+			overflow: auto;
+			max-width: 100%;
+		}
+
+	</style>
+
 </Layout>
