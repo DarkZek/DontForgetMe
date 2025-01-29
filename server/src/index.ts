@@ -15,7 +15,7 @@ async function run() {
   }).withTypeProvider<TypeBoxTypeProvider>()
 
   await server.register(cors, {
-    origin: 'http://localhost:4321',
+    origin: process.env.CLIENT_DOMAIN ?? 'http://localhost:4321',
     credentials: true
   } satisfies FastifyCorsOptions)
 
