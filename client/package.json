@@ -16,6 +16,7 @@
     "@sinclair/typebox": "^0.34.14",
     "astro": "^5.1.7",
     "astro-icon": "^1.1.5",
+    "axios": "^1.7.9",
     "dotenv": "^16.4.7",
     "drizzle-orm": "^0.38.3",
     "firebase": "^11.1.0",

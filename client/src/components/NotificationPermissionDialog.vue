@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { requestPermission } from '../service/frontend/firebase'
+import { requestPermission } from '../service/firebase'
 import Loading from './Loading.vue'
 import { Icon } from "@iconify/vue";
+import { createSubscription } from '@src/service/api';
 
 const loading = ref(false)
 const errorMessage = ref<string>()
@@ -18,17 +19,20 @@ async function doPermission() {
     try {
         const fcmToken = await requestPermission()
 
-        await fetch(`${import.meta.env.PUBLIC_API_URL}/subscribe`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
+        try {
+            await createSubscription(
                 fcmToken,
-                intervalSeconds: 60 * 60 * 24 * props.intervalDays,
-            }),
-            credentials: 'include'
-        })
+                60 * 60 * 24 * props.intervalDays
+            )
+        } catch (e) {
+            if (e.response.data.code !== 'EXISTING_SUBSCRIPTION') {
+                throw e
+            }
+
+            // Ignore
+        }
+
+        window.localStorage.setItem('fcmToken', fcmToken)
 
         console.log('Successfully subscribed!')
 

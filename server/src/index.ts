@@ -28,6 +28,14 @@ async function run() {
       return
     }
 
+    if (error instanceof Error && error.code === 'FST_ERR_VALIDATION') {
+      reply.code(400).send({
+        code: 'INVALID_REQUEST',
+        message: error.message
+      })
+      return
+    }
+
     this.log.error({
       error,
       json: JSON.stringify(error)

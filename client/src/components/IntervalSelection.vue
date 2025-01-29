@@ -13,7 +13,7 @@ function selectInterval(interval: number) {
 
 <template>
     <div class="interval-selection">
-        <input type="radio" id="i2" name="interval" value="2" checked @input="selectInterval(2)">
+        <input type="radio" id="i2" name="interval" value="2" @input="selectInterval(2)">
         <label for="i2" class="option">
             <span>2</span>
             <span>DAYS</span>
@@ -37,14 +37,18 @@ function selectInterval(interval: number) {
             <span>DAYS</span>
         </label>
 
-        <input
-            v-if="customShown"
-            type="number"
-            placeholder="Enter days"
-            max="30"
-            min="1"
-        >
+        <br>
     </div>
+
+    <input
+        v-if="customShown"
+        v-model="selectedInterval"
+        class="custom-interval"
+        type="number"
+        placeholder="Enter days"
+        max="30"
+        min="1"
+    >
 
 </template>
 
@@ -80,7 +84,7 @@ function selectInterval(interval: number) {
         }
     }
 
-    #custom-interval {
+    .custom-interval {
         margin-top: 16px;
         width: 100%;
         max-width: 200px;

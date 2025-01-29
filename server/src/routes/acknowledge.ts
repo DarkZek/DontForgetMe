@@ -1,4 +1,4 @@
-import { FastifyInstance, FastifyPluginAsync } from "fastify";
+import type { FastifyInstance, FastifyPluginAsync } from "fastify";
 import { db } from "@db/index";
 import { notificationsTable } from "@db/schema";
 import { eq } from 'drizzle-orm'

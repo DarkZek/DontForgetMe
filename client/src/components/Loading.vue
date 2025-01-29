@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { Icon } from "@iconify/vue";
+
 defineProps({
     size: String,
 })
@@ -6,7 +8,7 @@ defineProps({
 
 <template>
     <div>
-        <Icon class="e1" name="noto:sunflower" :size="size ?? '32px'" />
+        <Icon class="e1" icon="noto:sunflower" :size="size ?? '32px'" />
     </div>
 </template>
 

@@ -1,5 +1,5 @@
-import { Static, Type } from "@fastify/type-provider-typebox";
-import { FastifyInstance, FastifyPluginAsync } from "fastify";
+import { type Static, Type } from "@fastify/type-provider-typebox";
+import type { FastifyInstance, FastifyPluginAsync } from "fastify";
 import { db } from "@db/index";
 import { notificationsTable } from "@db/schema";
 import { eq, sql } from 'drizzle-orm'
