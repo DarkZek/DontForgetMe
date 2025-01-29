@@ -6,13 +6,13 @@ export class FirebaseService {
     messaging: ReturnType<typeof getMessaging>
 
     constructor() {
-        const serviceAccountBase64 = process.env['FIREBASE_ADMIN_AUTH_BASE64']
+        const serviceAccountBase64 = process.env.FIREBASE_ADMIN_AUTH_BASE64
 
         if (!serviceAccountBase64) {
             throw new Error('FIREBASE_ADMIN_AUTH_BASE64 must be set')
         }
 
-        const serviceAccountData: string = atob(serviceAccountBase64)
+        const serviceAccountData: string = Buffer.from(serviceAccountBase64, 'base64').toString('utf-8')
         const serviceAccount = JSON.parse(serviceAccountData)
         
         initializeApp({
