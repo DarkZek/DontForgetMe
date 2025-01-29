@@ -20,11 +20,3 @@ import Title from './Title.astro'
     }
 
 </style>
-
-<script>
-document.getElementById('notification-trigger')?.addEventListener('click', () => {
-    const dialog = document.getElementById('notification-permission-dialog')
-    dialog!.style.opacity = '1'
-    dialog!.style.display = 'block'
-})
-</script>

@@ -1,30 +1,14 @@
 ---
-import { db } from '@db/index'
-import { notificationsTable } from '@db/schema'
-import { eq } from 'drizzle-orm'
-import { Icon } from 'astro-icon/components'
 import Title from './Title.astro'
 
 import HowItWorks1 from '../assets/HowItWorks1.svg'
 import HowItWorks2 from '../assets/HowItWorks2.svg'
 import HowItWorks3 from '../assets/HowItWorks3.svg'
 
-import NotificationPermissionDialog from './NotificationPermissionDialog.astro'
-import IntervalSelection from './IntervalSelection.astro'
-import CalendarDisplay from './CalendarDisplay.astro'
-
-const fcmToken = Astro.cookies.get('fcmToken')?.value
-
-let subscription
-
-if (fcmToken) {
-    subscription = (await db.select().from(notificationsTable)
-        .where(eq(notificationsTable.fcmToken, fcmToken))
-        .limit(1))[0]
-}
+import CreateSubscription from './CreateSubscription.vue'
 ---
   
-<form>
+<div>
     <br>
     <br>
 
@@ -43,33 +27,8 @@ if (fcmToken) {
     <br>
     <br>
 
-    { subscription ? (
-        <p>
-            <Icon name="noto:bell" size="24" />
-            You're already subscribed to notifications
-        </p>
-        <a
-            class="button plausible-event-name=Change+Interval+Click"
-            href="/subscription"
-        >
-            <Icon name="noto:pencil" size="18" />
-            Change watering interval
-        </a>
-    ) : (
-
-        <IntervalSelection />
-
-        <CalendarDisplay />
-
-        <input
-            type="submit"
-            class="button plausible-event-name=Start+Reminders+Click"
-            value="Start watering reminders"
-        />
-    ) }
-</form>
-
-<NotificationPermissionDialog />
+    <CreateSubscription client:load />
+</div>
 
 <style>
 
@@ -95,15 +54,3 @@ if (fcmToken) {
     }
 
 </style>
-
-<script>
-document.querySelector('.main-content')!.addEventListener('submit', (e) => {
-    e.preventDefault()
-
-    const dialog = document.getElementById('notification-permission-dialog')
-    dialog!.style.opacity = '1'
-    dialog!.style.display = 'block'
-
-    return false
-})
-</script>

@@ -1,5 +1,5 @@
-import { initializeApp } from "firebase/app";
-import { getMessaging, getToken } from "firebase/messaging";
+import { initializeApp, type FirebaseApp } from "firebase/app";
+import { getMessaging, getToken, type Messaging } from "firebase/messaging";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBEeODfJCF2oXhGgXEo2pUb5ozYaDbWRJs",
@@ -11,12 +11,23 @@ const firebaseConfig = {
   measurementId: "G-H4BTBZCG75"
 };
 
-const app = initializeApp(firebaseConfig);
+let app: FirebaseApp;
 
-const messaging = getMessaging(app);
+let messaging: Messaging;
+
+function initApp() {
+  console.log('Initializing Firebase app...');
+  app = initializeApp(firebaseConfig)
+  messaging = getMessaging(app)
+}
 
 // Returns 
-async function requestPermission(askPermission: boolean = true) {
+async function requestPermission(askPermission = true) {
+
+  if (app === undefined) {
+    initApp()
+  }
+
   console.log('Requesting permission...');
   
   const currentToken = await getToken(messaging, { vapidKey: 'BHFfVJ5LVRWtMS8__xhLO1L5kF1IBGti5MVrQApV2QI00OXTknLx4igvEYT_b7icf-rmCeU3iGYhGZfqP7pw0Qc' })

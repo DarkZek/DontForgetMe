@@ -126,11 +126,12 @@ if (day === DayType.Watering) {
 
 	<script>
 		document.getElementById('unsubscribe-button')?.addEventListener('click', async () => {
-			await fetch('/unsubscribe', {
+			await fetch(`${import.meta.env.PUBLIC_API_URL}/unsubscribe`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
-				}
+				},
+            	credentials: 'include'
 			})
 	
 			console.log('Successfully unsubscribed!')
@@ -139,22 +140,24 @@ if (day === DayType.Watering) {
 		})
 
 		document.getElementById('skip-button')?.addEventListener('click', async () => {
-			await fetch('/skip', {
+			await fetch(`${import.meta.env.PUBLIC_API_URL}/skip`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
-				}
+				},
+            	credentials: 'include'
 			})
 
 			window.location.reload()
 		})
 
 		document.getElementById('watered-button')?.addEventListener('click', async () => {
-			await fetch('/acknowledge', {
+			await fetch(`${import.meta.env.PUBLIC_API_URL}/acknowledge`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
-				}
+				},
+            	credentials: 'include'
 			})
 
 			window.location.reload()
