@@ -3,6 +3,7 @@ import { db } from "@db/index";
 import { notificationsTable } from "@db/schema";
 import { eq, sql } from 'drizzle-orm'
 import { ClientError } from "@src/error";
+import { TokenHeader, TokenHeaderType } from "./types";
 
 async function skip(
     fcmToken: string
@@ -31,12 +32,18 @@ export const skipRouter: FastifyPluginAsync = async (
     fastify: FastifyInstance
   ) => {
 
-    fastify.post(
+    fastify.post<{
+        Headers: TokenHeaderType
+    }>(
         '/',
-        {},
+        {
+            schema: {
+                headers: TokenHeader
+            }
+        },
         async (request, reply) => {
             await skip(
-                request.cookies["fcmToken"]!,
+                request.headers.fcmtoken
             )
             reply.code(200).send({
                 code: 'OK',

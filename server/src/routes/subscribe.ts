@@ -6,9 +6,9 @@ import { eq, sql } from 'drizzle-orm'
 import { ClientError } from "@src/error";
 import type { Message } from "firebase-admin/lib/messaging/messaging-api";
 import { firebaseService } from "@src/services/firebase";
+import { TokenHeader, type TokenHeaderType } from "./types";
 
 export const RequestType = Type.Object({
-    fcmToken: Type.String(),
     intervalSeconds: Type.Number({
         minimum: 86400,
         maximum: 2592000
@@ -63,20 +63,19 @@ export const subscribeRouter: FastifyPluginAsync = async (
   ) => {
 
     fastify.post<{
-        Body: Static<typeof RequestType>
+        Body: Static<typeof RequestType>,
+        Headers: TokenHeaderType
     }>(
         '/',
         {
             schema: {
-                body: RequestType
+                body: RequestType,
+                headers: TokenHeader
             }
         },
         async (request, reply) => {
-            reply.setCookie('fcmToken', request.body.fcmToken, {
-                expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365),
-            })
             await subscribe(
-                request.body.fcmToken,
+                request.headers.fcmtoken,
                 request.body.intervalSeconds
             )
             reply.code(200).send({

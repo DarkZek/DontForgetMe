@@ -32,8 +32,6 @@ async function doPermission() {
             // Ignore
         }
 
-        window.localStorage.setItem('fcmToken', fcmToken)
-
         console.log('Successfully subscribed!')
 
         window.location.href = '/subscription'

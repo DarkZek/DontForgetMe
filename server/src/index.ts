@@ -1,5 +1,4 @@
 import fastify from 'fastify'
-import cookie from '@fastify/cookie'
 import { subscribeRouter } from './routes/subscribe'
 import { ClientError } from './error'
 import { skipRouter } from './routes/skip'
@@ -8,6 +7,7 @@ import { acknowledgeRouter } from './routes/acknowledge'
 import { startCron } from './cron'
 import cors, { type FastifyCorsOptions } from '@fastify/cors'
 import type { TypeBoxTypeProvider } from '@fastify/type-provider-typebox'
+import { subscriptionRouter } from './routes/subscription'
 
 async function run() {
   const server = fastify({
@@ -46,17 +46,15 @@ async function run() {
     })
   })
 
-  await server.register(cookie)
-
   await server.register(subscribeRouter, { prefix: '/subscribe' })
 
   await server.register((server) => {
     server.addHook('onRequest', async (request, reply) => {
       // Ensure fcmToken is set
-      if (!request.cookies.fcmToken) {
+      if (!request.headers.fcmtoken) {
         reply.code(400).send({
           code: 'MISSING_FCM_TOKEN',
-          message: 'fcmToken cookie is required'
+          message: 'fcmToken header is required'
         })
       }
     })
@@ -64,6 +62,7 @@ async function run() {
     server.register(skipRouter, { prefix: '/skip' })
     server.register(unsubscribeRouter, { prefix: '/unsubscribe' })
     server.register(acknowledgeRouter, { prefix: '/acknowledge' })
+    server.register(subscriptionRouter, { prefix: '/subscription' })
   })
 
   server.get('/status', async (_1, _2) => {

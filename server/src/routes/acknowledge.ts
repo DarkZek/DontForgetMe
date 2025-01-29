@@ -3,6 +3,7 @@ import { db } from "@db/index";
 import { notificationsTable } from "@db/schema";
 import { eq } from 'drizzle-orm'
 import { ClientError } from "@src/error";
+import { TokenHeader, TokenHeaderType } from "./types";
 
 async function acknowledge(
     fcmToken: string
@@ -43,12 +44,18 @@ export const acknowledgeRouter: FastifyPluginAsync = async (
     fastify: FastifyInstance
   ) => {
 
-    fastify.post(
+    fastify.post<{
+        Headers: TokenHeaderType
+    }>(
         '/',
-        {},
+        {
+            schema: {
+                headers: TokenHeader
+            }
+        },
         async (request, reply) => {
             await acknowledge(
-                request.cookies.fcmToken!,
+                request.headers.fcmtoken,
             )
             reply.code(200).send({
                 code: 'OK',

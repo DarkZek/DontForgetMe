@@ -1,70 +1,9 @@
 ---
-import { dayInMillis } from '@src/const';
-import CalendarDisplay from '../components/NewCalendarDisplay.astro'
 import Title from '../components/Title.astro'
 import Layout from '../layouts/Layout.astro';
-import { db } from '@db/index';
-import { notificationsTable } from '@db/schema';
-import { eq } from 'drizzle-orm';
+import ManageSubscription from '@src/components/ManageSubscription.vue';
 
-export const prerender = false
-
-const fcmToken = Astro.cookies.get('fcmToken')?.value
-
-if (!fcmToken) {
-	return Astro.redirect('/')
-}
-
-const subscription = (await db.select().from(notificationsTable)
-	.where(eq(notificationsTable.fcmToken, fcmToken))
-	.limit(1))[0]
-
-if (!subscription) {
-	return Astro.redirect('/')
-}
-
-let daysWateringOverdue = -1
-
-// If they haven't acknowledged the watering then they're overdue
-if (!subscription.wateringAcknowledged && subscription.nextWateringTime.getTime() < new Date().getTime()) {
-	// Calculate how many millis we're overdue by
-	const overdueMillis = new Date().getTime() - subscription.nextWateringTime.getTime()
-	daysWateringOverdue = Math.floor(overdueMillis / dayInMillis)
-}
-
-let daysUntilNextWatering = -1
-
-if (subscription.nextWateringTime.getTime() > new Date().getTime()) {
-	// Calculate how many millis until the next watering
-	const millisUntilNextWatering = subscription.nextWateringTime.getTime() - new Date().getTime()
-	daysUntilNextWatering = Math.ceil(millisUntilNextWatering / dayInMillis)
-}
-
-// If the nextWateringTime is within 24 hours we consider it as watering day
-const wateringDay = daysUntilNextWatering === 0
-
-enum DayType {
-	Watering,
-	Normal,
-	Overdue
-}
-
-let day = DayType.Normal
-
-if (daysWateringOverdue === 0) {
-	day = DayType.Watering
-} else if (daysWateringOverdue > 0) {
-	day = DayType.Overdue
-}
-
-let message = `Next watering in ${daysUntilNextWatering} day${daysUntilNextWatering > 1 ? 's' : ''}`
-
-if (day === DayType.Watering) {
-	message = `It's watering day! 🌧️`
-} else if (day === DayType.Overdue) {
-	message = `You're ${daysWateringOverdue} day${daysWateringOverdue > 1 ? 's' : ''} overdue 🍂`
-}
-
+export const prerender = true
 ---
 
 <Layout>
@@ -73,96 +12,9 @@ if (day === DayType.Watering) {
 
 	<br>
 
-	<h3>{message}</h3>
-
-	<br>
-
-	<CalendarDisplay
-		subscription={subscription}
-	/>
-
-	{
-		wateringDay && (
-			<button
-				id="skip-button"
-				class="plausible-event-name=Skip+Click"
-			>
-				Skip
-			</button>
-		)
-	}
-
-	<br>
-
-	{
-		(day === DayType.Overdue || day === DayType.Watering) && (
-			<button
-				id="watered-button"
-				class="plausible-event-name=Watered+Click"
-			>
-				Mark as watered
-			</button>
-		)
-	}
-
-	<br>
-
-	<button
-		id="unsubscribe-button"
-		class="plausible-event-name=Unsubscribe+Click"
-	>
-		Unsubscribe
-	</button>
-
-	<style>
-
-		h3 {
-			text-align: center;
-			color: #114C0B;
-			font-size: 24px;
-		}
-
-	</style>
+	<ManageSubscription client:only="vue" />
 
 	<script>
-		document.getElementById('unsubscribe-button')?.addEventListener('click', async () => {
-			await fetch(`${import.meta.env.PUBLIC_API_URL}/unsubscribe`, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-            	credentials: 'include'
-			})
-	
-			console.log('Successfully unsubscribed!')
-	
-			window.location.href = '/'
-		})
-
-		document.getElementById('skip-button')?.addEventListener('click', async () => {
-			await fetch(`${import.meta.env.PUBLIC_API_URL}/skip`, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-            	credentials: 'include'
-			})
-
-			window.location.reload()
-		})
-
-		document.getElementById('watered-button')?.addEventListener('click', async () => {
-			await fetch(`${import.meta.env.PUBLIC_API_URL}/acknowledge`, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-            	credentials: 'include'
-			})
-
-			window.location.reload()
-		})
-
 		const loadedAt = new Date()
 
 		// If the tab is inactive for more than an hour, refresh when they come back to keep up to date
