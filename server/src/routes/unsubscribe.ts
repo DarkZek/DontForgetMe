@@ -26,7 +26,10 @@ export const unsubscribeRouter: FastifyPluginAsync = async (
             await unsubscribe(
                 request.cookies["fcmToken"]!,
             )
-            reply.code(200).send()
+            reply.code(200).send({
+                code: 'OK',
+                message: 'Unsubscribed'
+            })
         }
     )
 }

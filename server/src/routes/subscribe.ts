@@ -8,6 +8,7 @@ import type { Message } from "firebase-admin/lib/messaging/messaging-api";
 import { firebaseService } from "@src/services/firebase";
 
 export const RequestType = Type.Object({
+    fcmToken: Type.String(),
     intervalSeconds: Type.Number({
         minimum: 86400,
         maximum: 2592000
@@ -71,11 +72,17 @@ export const subscribeRouter: FastifyPluginAsync = async (
             }
         },
         async (request, reply) => {
+            reply.setCookie('fcmToken', request.body.fcmToken, {
+                expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365),
+            })
             await subscribe(
-                request.cookies["fcmToken"]!,
+                request.body.fcmToken,
                 request.body.intervalSeconds
             )
-            reply.code(200).send()
+            reply.code(200).send({
+                code: 'OK',
+                message: 'Subscribed'
+            })
         }
     )
 }

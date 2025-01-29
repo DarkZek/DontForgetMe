@@ -38,7 +38,10 @@ export const skipRouter: FastifyPluginAsync = async (
             await skip(
                 request.cookies["fcmToken"]!,
             )
-            reply.code(200).send()
+            reply.code(200).send({
+                code: 'OK',
+                message: 'Skipped'
+            })
         }
     )
 }

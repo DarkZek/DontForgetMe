@@ -48,9 +48,12 @@ export const acknowledgeRouter: FastifyPluginAsync = async (
         {},
         async (request, reply) => {
             await acknowledge(
-                request.cookies["fcmToken"]!,
+                request.cookies.fcmToken!,
             )
-            reply.code(200).send()
+            reply.code(200).send({
+                code: 'OK',
+                message: 'Acknowledged'
+            })
         }
     )
 }
