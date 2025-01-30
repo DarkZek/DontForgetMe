@@ -12,7 +12,7 @@ async function fetchData() {
     try {
         subscription.value = await getSubscription()
     } catch (e) {
-        if (e.response?.data?.code === 'NO_SUBSCRIPTION') {
+        if (e.response?.data?.code === 'NO_SUBSCRIPTION' || e.response?.data?.code === 'MISSING_FCM_TOKEN') {
             window.localStorage.removeItem('fcmToken')
             window.location.href = '/'
             return

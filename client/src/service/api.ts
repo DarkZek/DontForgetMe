@@ -16,8 +16,6 @@ export async function createSubscription(
             fcmtoken: fcmToken
         }
     })
-
-    window.localStorage.setItem('fcmToken', fcmToken)
 }
 
 export async function removeSubscription() {
