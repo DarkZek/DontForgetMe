@@ -1,10 +1,9 @@
 <script setup lang="ts">
-
-// Fetch subscription data
 import { computed, onBeforeMount, ref } from 'vue'
 import { acknowledgeWatering, delayDay, getSubscription, removeSubscription } from '@src/service/api'
 import type { Subscription } from '@src/service/types';
 import { dayInMillis } from '@src/const';
+import CalendarDisplay from './NewCalendarDisplay.vue'
 
 const subscription = ref<Subscription>()
 
@@ -24,8 +23,6 @@ async function fetchData() {
 onBeforeMount(fetchData)
 
 const daysWateringOverdue = computed(() => {
-    console.log('daysWateringOverdue')
-
     if (!subscription.value) {
         return -1
     }
@@ -106,9 +103,10 @@ async function water() {
 
     <br>
 
-    <!-- <CalendarDisplay
-        subscription={subscription}
-    /> -->
+    <CalendarDisplay
+        v-if="subscription"
+        :subscription="subscription"
+    />
 
     <button
         @click="skip"
