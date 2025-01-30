@@ -1,5 +1,5 @@
 import { initializeApp, type FirebaseApp } from "firebase/app";
-import { getMessaging, getToken, type Messaging } from "firebase/messaging";
+import { getMessaging, getToken, onMessage, type Messaging } from "firebase/messaging";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBEeODfJCF2oXhGgXEo2pUb5ozYaDbWRJs",
@@ -11,26 +11,32 @@ const firebaseConfig = {
   measurementId: "G-H4BTBZCG75"
 };
 
-let app: FirebaseApp;
+// Define app on window
+declare global {
+  interface Window { 
+    app: FirebaseApp;
+    messaging: Messaging;
+  }
+}
 
-let messaging: Messaging;
-
-function initApp() {
+export function initApp() {
   console.log('Initializing Firebase app...');
-  app = initializeApp(firebaseConfig)
-  messaging = getMessaging(app)
+  window.app = initializeApp(firebaseConfig)
+  window.messaging = getMessaging(window.app)
+
+  onMessage(messaging, (payload) => { alert('Message received. '); console.log(payload); });     
 }
 
 // Returns 
 async function requestPermission(askPermission = true) {
 
-  if (app === undefined) {
+  if (window.app === undefined) {
     initApp()
   }
 
   console.log('Requesting permission...');
   
-  const currentToken = await getToken(messaging, { vapidKey: 'BHFfVJ5LVRWtMS8__xhLO1L5kF1IBGti5MVrQApV2QI00OXTknLx4igvEYT_b7icf-rmCeU3iGYhGZfqP7pw0Qc' })
+  const currentToken = await getToken(window.messaging, { vapidKey: 'BHFfVJ5LVRWtMS8__xhLO1L5kF1IBGti5MVrQApV2QI00OXTknLx4igvEYT_b7icf-rmCeU3iGYhGZfqP7pw0Qc' })
   
   if (!currentToken && askPermission) {
     // Show permission request UI
@@ -49,4 +55,4 @@ async function requestPermission(askPermission = true) {
   return currentToken
 }
 
-export { app, messaging, requestPermission }
+export { requestPermission }

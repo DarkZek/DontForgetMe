@@ -21,6 +21,12 @@ import "@fontsource/jua";
 			<span class="quote">"Life is too short to not buy that houseplant"</span>
 		</div>
 	</body>
+
+	<script>
+		// TODO: Make sure this isnt including firebase twice, and if its not make firebase not use window
+		import { initApp } from '../service/firebase';
+		initApp()
+	</script>
 </html>
 
 <style is:global>
