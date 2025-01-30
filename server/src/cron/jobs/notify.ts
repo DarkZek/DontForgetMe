@@ -17,9 +17,32 @@ export async function notify() {
     for (const notification of notifications) {
         // Send notification
           const message: Message = {
-            notification: {
-              title: '🌻 It\'s watering time for your plants!',
-              body: 'Click to confirm or delay watering'
+            webpush: {
+                notification: {
+                    title: '🌻 It\'s watering time for your plants!',
+                    body: 'Click to confirm or delay watering',
+                    actions: [
+                        {
+                            action: 'confirm',
+                            title: 'Confirm'
+                        },
+                        {
+                            action: 'delay',
+                            title: 'Delay'
+                        }
+                    ],
+                    badge: `${process.env.CLIENT_DOMAIN}/img/plant.png`,
+                    icon: `${process.env.CLIENT_DOMAIN}/img/plant.png`,
+                    image: `${process.env.CLIENT_DOMAIN}/img/plant.png`,
+                    renotify: true,
+                    vibrate: [200, 100, 200],
+                    tag: 'watering-reminder',
+                },
+                fcmOptions: {
+                    ...process.env.CLIENT_DOMAIN?.startsWith('https') ? {
+                        link: `${process.env.CLIENT_DOMAIN}/subscription`
+                    } : {}
+                }
             },
             token: notification.fcmToken
           };
