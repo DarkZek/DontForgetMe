@@ -19,7 +19,7 @@ export async function notify() {
           const message: Message = {
             webpush: {
                 notification: {
-                    title: '🌻 It\'s watering time for your plants!',
+                    title: '🌧️ Watering time!',
                     body: 'Click to confirm or delay watering',
                     actions: [
                         {
@@ -33,7 +33,6 @@ export async function notify() {
                     ],
                     badge: `${process.env.CLIENT_DOMAIN}/img/plant.png`,
                     icon: `${process.env.CLIENT_DOMAIN}/img/plant.png`,
-                    image: `${process.env.CLIENT_DOMAIN}/img/plant.png`,
                     renotify: true,
                     vibrate: [200, 100, 200],
                     tag: 'watering-reminder',

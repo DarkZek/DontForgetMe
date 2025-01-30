@@ -28,39 +28,15 @@ async function subscribe(
     }
 
     const message: Message = {
-        webpush: {
-            notification: {
-                title: '🌻 It\'s watering time for your plants!',
-                body: 'This is an example of what your watering reminders will look like',
-                actions: [
-                    {
-                        action: 'confirm',
-                        title: 'Confirm'
-                    },
-                    {
-                        action: 'delay',
-                        title: 'Delay'
-                    }
-                ],
-                badge: `${process.env.CLIENT_DOMAIN}/img/plant.png`,
-                icon: `${process.env.CLIENT_DOMAIN}/img/plant.png`,
-                image: `${process.env.CLIENT_DOMAIN}/img/plant.png`,
-                renotify: true,
-                vibrate: [200, 100, 200],
-                tag: 'watering-reminder',
-            },
-            fcmOptions: {
-                ...process.env.CLIENT_DOMAIN?.startsWith('https') ? {
-                    link: `${process.env.CLIENT_DOMAIN}/subscription`
-                } : {}
-            }
+        notification: {
+            title: 'Test Notification',
+            body: 'If you received this please contact support'
         },
         token: fcmToken
     };
 
     try {
-        await firebaseService.messaging.send(message)
-        console.log('Sent initial message')
+        await firebaseService.messaging.send(message, true)
     } catch (e: any) {
         if (e.code === 'messaging/registration-token-not-registered') {
             throw new ClientError("USER_DISABLED_NOTIFICATIONS", "The user has disabled push notifications")
@@ -68,7 +44,6 @@ async function subscribe(
         if (e.code === 'messaging/invalid-argument') {
             throw new ClientError("INVALID_FCM", "FCM is invalid")
         }
-        console.warn('Failed to send initial message')
 
         throw e
     }
