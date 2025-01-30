@@ -65,7 +65,7 @@ async function run() {
     server.register(subscriptionRouter, { prefix: '/subscription' })
   })
 
-  server.get('/status', async (_1, _2) => {
+  server.get('/', async (_1, _2) => {
     return 'up\n'
   })
 
